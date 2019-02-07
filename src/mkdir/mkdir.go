@@ -23,13 +23,7 @@ import (
 	"os"
 )
 
-var (
-	Mode    uint32
-	Parents bool
-	Verbose bool
-)
-
-func Mkdir(args []string) {
+func Mkdir(Mode uint, Parents, Verbose bool, args []string) {
 	for _, dir := range args {
 		if Parents {
 			err := os.MkdirAll(dir, os.FileMode(Mode))

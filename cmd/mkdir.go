@@ -9,19 +9,23 @@ import (
 	"github.com/hlfstr/flagger"
 )
 
-type mkdirCmd struct{}
+type mkdirCmd struct {
+	Mode    uint
+	Parents bool
+	Verbose bool
+}
 
 func (m *mkdirCmd) Prepare(flags *flagger.Flags) {
-	flags.BoolVar(&mkdir.Parents, "Create missing parent directories", "-p", "--parents")
-	flags.BoolVar(&mkdir.Verbose, "Display each directory after it was created", "-v", "--verbose")
-	mkdir.Mode = 0755 //Unit32 is not part of flagger yet
+	flags.BoolVar(&m.Parents, "Create missing parent directories", "-p", "--parents")
+	flags.BoolVar(&m.Verbose, "Display each directory after it was created", "-v", "--verbose")
+	flags.UintVar(&m.Mode, 0755, "Set permissions to MODE value", "-m", "--mode")
 }
 
 func (m *mkdirCmd) Action(s []string, flags *flagger.Flags) error {
 	if data, err := flags.Parse(s); err != nil {
 		return err
 	} else {
-		mkdir.Mkdir(data)
+		mkdir.Mkdir(m.Mode, m.Parents, m.Verbose, data)
 	}
 	return nil
 }
